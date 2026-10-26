@@ -27,40 +27,44 @@ app.use(
     }),
   }),
 );
+app.use(passport.session());
 
 import bcrypt from "bcryptjs";
 import passportLocal from "passport-local";
 const LocalStrategy = passportLocal.Strategy;
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      const user = prisma.user.findUnique({
-        where: { email: username },
-      });
+  new LocalStrategy(
+    { usernameField: "email" },
+    async (email, password, done) => {
+      try {
+        const user = await prisma.user.findUnique({
+          where: { email: email.toLowerCase() },
+        });
 
-      if (!user) {
-        return done(null, false, { message: "Incorrect email" });
+        if (!user) {
+          return done(null, false, { message: "Incorrect email" });
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+          return done(null, false, { message: "Incorrect password" });
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err);
       }
-
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
-        return done(null, false, { message: "Incorrect password" });
-      }
-
-      return done(null, user);
-    } catch (err) {
-      return done(err);
-    }
-  }),
+    },
+  ),
 );
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
-passport.deserializeUser((id, done) => {
+passport.deserializeUser(async (id, done) => {
   try {
     done(
       null,
-      prisma.user.findUnique({
+      await prisma.user.findUnique({
         where: { id },
       }),
     );
@@ -73,6 +77,9 @@ app.use((req, res, next) => {
   res.locals.currentUser = req.user;
   next();
 });
+
+import filesRouter from "./routes/filesRouter.js";
+app.use("/", filesRouter);
 
 const PORT = process.env.SERVER_PORT || 3000;
 app.listen(PORT, (errors) => {
