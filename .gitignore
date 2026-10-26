@@ -13,4 +13,4 @@ Session.vim
 node_modules
 .env
 
-/generated/prisma
+/generated
