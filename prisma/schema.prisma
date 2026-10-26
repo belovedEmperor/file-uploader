@@ -34,3 +34,10 @@ model Folder {
   id    Int    @id @default(autoincrement())
   files File[]
 }
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt   DateTime
+}

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import path from "node:path";
 import express from "express";
 
@@ -7,10 +8,28 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
+import expressSession from "express-session";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { prisma } from "./lib/prisma.js";
 import passport from "passport";
-import passportLocal from "passport-local";
+app.use(
+  expressSession({
+    cookie: {
+      maxAge: 14 * 24 * 60 * 60 * 1000, // ms
+    },
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
+  }),
+);
+
 import bcrypt from "bcryptjs";
+import passportLocal from "passport-local";
 const LocalStrategy = passportLocal.Strategy;
 passport.use(
   new LocalStrategy(async (username, password, done) => {
