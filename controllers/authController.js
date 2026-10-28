@@ -16,7 +16,20 @@ const whitespaceValidator = (value) => {
   return value.includes(" ") ? false : true;
 };
 
-const validateLoginInfo = [
+const validateAccountExists = [
+  body("email")
+    .trim()
+    .custom(async (email) => {
+      return (await prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+      }))
+        ? true
+        : false;
+    })
+    .withMessage("No account with that email exists."),
+];
+
+const validateSignupInfo = [
   body("email").trim().notEmpty().withMessage(`Email ${emptyErr}`),
   body("email")
     .custom(whitespaceValidator)
@@ -40,10 +53,6 @@ const validateLoginInfo = [
   body("password")
     .isStrongPassword({ minSymbols: 1 })
     .withMessage(`Password must have at least 1 symbol.`),
-];
-
-const validateSignupInfo = [
-  ...validateLoginInfo,
   body("confirmPassword")
     .trim()
     .notEmpty()
@@ -77,11 +86,11 @@ export const signupPost = [
       const hashedPassword = await bcrypt.hash(password, 10);
       await prisma.user.create({
         data: {
-          email,
+          email: email.toLowerCase(),
           password: hashedPassword,
         },
       });
-      res.redirect("/");
+      res.redirect("/auth/login");
     } catch (err) {
       console.error(err);
       next(err);
@@ -99,7 +108,8 @@ export function loginGet(req, res) {
 }
 
 export const loginPost = [
-  validateLoginInfo,
+  validateAccountExists,
+  [body("password").notEmpty().withMessage(`Password ${emptyErr}`)],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -110,7 +120,7 @@ export const loginPost = [
 
     passport.authenticate("local", {
       successRedirect: "/",
-      failureRedirect: "/login",
+      failureRedirect: "/auth/login",
       failureMessage: true,
     })(req, res);
   },

@@ -1,41 +1,62 @@
 import { prisma } from "../lib/prisma.js";
+import fs from "node:fs";
 import { body, validationResult, matchedData } from "express-validator";
 
 export function folderCreateGet(req, res) {
-  res.render("folderForm");
+  res.render("nameForm", {
+    title: "New Folder",
+    action: `/folder/new`,
+    buttonText: "Create",
+  });
 }
 
 export async function folderCreatePost(req, res) {
-  prisma.folder.create({ data: { name: req.body.name } });
+  await prisma.folder.create({
+    data: { name: req.body.name, userId: req.user.id },
+  });
   res.redirect("/");
 }
 
 export async function folderReadGet(req, res) {
-  const folder = prisma.folder.findUnique({
-    where: {
-      id: req.param.id,
-    },
+  const folder = await prisma.folder.findUnique({
+    where: { id: Number(req.params.id), userId: req.user.id },
     include: {
       files: true,
     },
   });
-  res.render("files", { folder });
+  if (!folder) {
+    return res.status(404).send("Folder not found.");
+  }
+  res.render("contents", { folder });
 }
 
 export async function folderRenameGet(req, res) {
-  res.render("folderForm");
+  res.render("nameForm", {
+    title: "Rename Folder",
+    action: `/folder/${req.params.id}/rename`,
+    buttonText: "Rename",
+  });
 }
 
 export async function folderRenamePost(req, res) {
-  prisma.folder.update({
-    where: { id: req.param.id },
+  await prisma.folder.update({
+    where: { id: Number(req.params.id), userId: req.user.id },
     data: {
       name: req.body.name,
     },
   });
-  res.redirect(`/folder/${req.param.id}`);
+  res.redirect(`/folder/${req.params.id}`);
 }
 
 export async function folderDeletePost(req, res) {
-  prisma.folder.delete({ where: { id: req.param.id } });
+  const folder = await prisma.folder.delete({
+    where: { id: Number(req.params.id), userId: req.user.id },
+    include: { files: { select: { path: true } } },
+  });
+  await Promise.all(
+    folder.files.map(async (file) => {
+      await fs.promises.rm(file.path);
+    }),
+  );
+  res.redirect("/");
 }

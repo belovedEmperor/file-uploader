@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
   redirectIfAuth,
-  redirectIfNotAuth,
   signupGet,
   signupPost,
   loginGet,

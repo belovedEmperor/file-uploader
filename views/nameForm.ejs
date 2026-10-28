@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title><%= title %></title>
+	</head>
+	<body>
+		<h1><%= title %></h1>
+		<form action="<%= action %>" method="POST">
+			<label>Name:
+				<input type="text" name="name" id="name" required>
+			</label>
+			<button type="submit"><%= buttonText %></button>
+		</form>
+
+		<% if (locals.errors) { %>
+			<ul>
+			<% for (const error of errors) { %>
+				<li><%= error.msg %></li>
+			<% } %>
+			</ul>
+		<% } %>
+	</body>
+</html>
