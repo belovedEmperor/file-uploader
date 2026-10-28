@@ -1,5 +1,4 @@
 import { Router } from "express";
-const authRouter = Router();
 import {
   redirectIfAuth,
   redirectIfNotAuth,
@@ -9,6 +8,8 @@ import {
   loginPost,
   logoutGet,
 } from "../controllers/authController.js";
+
+const authRouter = Router();
 
 authRouter.get("/signup", redirectIfAuth, signupGet);
 authRouter.post("/signup", redirectIfAuth, signupPost);

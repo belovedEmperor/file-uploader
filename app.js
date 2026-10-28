@@ -80,6 +80,10 @@ app.use((req, res, next) => {
 
 import authRouter from "./routes/authRouter.js";
 app.use("/auth", authRouter);
+import filesRouter from "./routes/filesRouter.js";
+app.use("/file", filesRouter);
+import foldersRouter from "./routes/foldersRouter.js";
+app.use("/folder", foldersRouter);
 
 const PORT = process.env.SERVER_PORT || 3000;
 app.listen(PORT, (errors) => {
