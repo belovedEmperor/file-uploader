@@ -1,0 +1,5 @@
+<a href="/file/<%= file.id %>"><%= file.name %></a>
+<a href="/file/<%= file.id %>/move">Move</a>
+<form action="/file/<%= file.id %>/delete" method="POST">
+    <button type="submit">Delete</button>
+</form>

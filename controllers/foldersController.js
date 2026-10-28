@@ -1,6 +1,5 @@
 import { prisma } from "../lib/prisma.js";
 import fs from "node:fs";
-import { body, validationResult, matchedData } from "express-validator";
 
 export function folderCreateGet(req, res) {
   res.render("nameForm", {
@@ -21,7 +20,7 @@ export async function folderReadGet(req, res) {
   const folder = await prisma.folder.findUnique({
     where: { id: Number(req.params.id), userId: req.user.id },
     include: {
-      files: true,
+      files: { where: { folderId: Number(req.params.id) } },
     },
   });
   if (!folder) {

@@ -6,11 +6,13 @@
 		<title><%= folder.name %> | File Uploader</title>
 	</head>
 	<body>
+        <%- include("partials/header") %>
+        
 		<h1><%= folder.name %></h1>
 		<ul>
 			<% for (const file of folder.files) { %>
 				<li>
-					<p><%= file.name %></p>
+					<%- include("partials/file", { file }) %>
 				</li>
 			<% } %>
 		</ul>

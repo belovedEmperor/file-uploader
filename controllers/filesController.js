@@ -1,6 +1,5 @@
 import { prisma } from "../lib/prisma.js";
 import fs from "node:fs";
-import { body, validationResult, matchedData } from "express-validator";
 import multer from "multer";
 
 const upload = multer({
@@ -38,7 +37,7 @@ export const fileCreatePost = [
 
 export async function fileReadGet(req, res) {
   const file = await prisma.file.findUnique({
-    where: { id: Number(req.params.id), userId: req.user.id },
+    where: { id: Number(req.params.id), userId: Number(req.user.id) },
   });
   if (!file) {
     return res.status(404).send("File not found.");
@@ -69,4 +68,34 @@ export async function fileDeletePost(req, res) {
   });
   await fs.promises.rm(file.path);
   res.redirect("/");
+}
+
+export async function fileMoveGet(req, res) {
+  const folders = await prisma.folder.findMany({
+    where: {
+      userId: Number(req.user.id),
+    },
+  });
+
+  if (!folders) {
+    return res.status(404).send("Folder not found.");
+  }
+
+  res.render("moveFile", { fileId: req.params.id, folders });
+}
+
+export async function fileMovePost(req, res) {
+  if (req.params.folderId === "0") {
+    await prisma.file.update({
+      where: { id: Number(req.params.id), userId: req.user.id },
+      data: { folderId: null },
+    });
+    return res.redirect("/");
+  }
+
+  await prisma.file.update({
+    where: { id: Number(req.params.id), userId: req.user.id },
+    data: { folderId: Number(req.params.folderId) },
+  });
+  res.redirect(`/folder/${req.params.folderId}`);
 }

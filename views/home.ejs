@@ -16,7 +16,7 @@
             <% } %> 
             <% for (const file of files) { %> 
                 <li>
-                    <a href="file/<%= file.id %>"><%= file.name %></a>
+                    <%- include("partials/file", { file }) %>
                 </li>
             <% } %> 
         </ul>

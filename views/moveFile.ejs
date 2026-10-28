@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Move File | File Uploader</title>
+	</head>
+	<body>
+        <%- include("partials/header") %>
+        
+		<h1>Move File </h1>
+        <ul>
+            <li>
+                <a href="/file/<%= fileId %>/move/0">No folder</a>
+            </li>
+            <% for (const folder of folders) { %> 
+                <li>
+                    <a href="/file/<%= fileId %>/move/<%= folder.id %>"><%= folder.name %>/</a>
+                </li>
+            <% } %> 
+        </ul>
+	</body>
+</html>

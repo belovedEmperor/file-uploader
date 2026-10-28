@@ -7,6 +7,8 @@ import {
   fileRenameGet,
   fileRenamePost,
   fileDeletePost,
+  fileMoveGet,
+  fileMovePost,
 } from "../controllers/filesController.js";
 
 const filesRouter = Router();
@@ -17,5 +19,7 @@ filesRouter.get("/:id", redirectIfNotAuth, fileReadGet);
 filesRouter.get("/:id/rename", redirectIfNotAuth, fileRenameGet);
 filesRouter.post("/:id/rename", redirectIfNotAuth, fileRenamePost);
 filesRouter.post("/:id/delete", redirectIfNotAuth, fileDeletePost);
+filesRouter.get("/:id/move", redirectIfNotAuth, fileMoveGet);
+filesRouter.get("/:id/move/:folderId", redirectIfNotAuth, fileMovePost);
 
 export default filesRouter;
