@@ -84,6 +84,8 @@ import filesRouter from "./routes/filesRouter.js";
 app.use("/file", filesRouter);
 import foldersRouter from "./routes/foldersRouter.js";
 app.use("/folder", foldersRouter);
+import indexRouter from "./routes/indexRouter.js";
+app.use("/", indexRouter);
 
 const PORT = process.env.SERVER_PORT || 3000;
 app.listen(PORT, (errors) => {

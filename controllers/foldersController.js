@@ -27,7 +27,7 @@ export async function folderReadGet(req, res) {
   if (!folder) {
     return res.status(404).send("Folder not found.");
   }
-  res.render("contents", { folder });
+  res.render("folderContents", { folder });
 }
 
 export async function folderRenameGet(req, res) {

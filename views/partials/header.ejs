@@ -1,0 +1,7 @@
+<% if (!locals.currentUser) { %>
+    <a href="/auth/login">Log in</a>
+    <a href="/auth/signup">Sign up</a>
+<% } else { %>
+    <a href="/file/upload">Upload file</a>
+    <a href="/auth/logout">Log out</a>
+<% } %>
