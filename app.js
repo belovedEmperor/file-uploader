@@ -90,7 +90,7 @@ app.use("/", indexRouter);
 const PORT = process.env.SERVER_PORT || 3000;
 app.listen(PORT, (errors) => {
   if (errors) {
-    throw errors;
+    console.log(errors);
   }
 
   console.log(`Listening on port ${PORT}`);
