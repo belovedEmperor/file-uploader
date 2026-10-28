@@ -26,7 +26,7 @@ const validateAccountExists = [
         ? true
         : false;
     })
-    .withMessage("No account with that email exists."),
+    .withMessage("Incorrect email or password."),
 ];
 
 const validateSignupInfo = [
