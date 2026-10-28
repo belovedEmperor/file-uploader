@@ -6,7 +6,7 @@ import { body, validationResult, matchedData } from "express-validator";
 export const redirectIfAuth = (req, res, next) =>
   req.isAuthenticated() ? res.redirect("/") : next();
 export const redirectIfNotAuth = (req, res, next) =>
-  req.isAuthenticated() ? next() : res.redirect("/login");
+  req.isAuthenticated() ? next() : res.redirect("/auth/login");
 
 const emptyErr = "must not be empty.";
 const whitespaceErr = "must not contain whitespace.";

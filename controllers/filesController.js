@@ -4,7 +4,9 @@ import multer from "multer";
 
 const upload = multer({
   dest: "uploads/",
-  limits: { fileSize: 1000 * 1000 },
+  limits: {
+    fileSize: 20 * 1000 * 1000, // MB
+  },
 });
 
 export function fileCreateGet(req, res) {
@@ -98,4 +100,15 @@ export async function fileMovePost(req, res) {
     data: { folderId: Number(req.params.folderId) },
   });
   res.redirect(`/folder/${req.params.folderId}`);
+}
+
+export async function fileDownloadGet(req, res) {
+  const file = await prisma.file.findUnique({
+    where: { id: Number(req.params.id), userId: req.user.id },
+    select: { path: true, name: true },
+  });
+  if (!file) {
+    return res.status(404).send("File not found.");
+  }
+  res.download(file.path, file.name);
 }
